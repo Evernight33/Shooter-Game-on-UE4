@@ -1,12 +1,12 @@
 // Shoot Them up Game, All rights reserved.
 
+#include "Player/STUPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/STUWeaponComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Player/STUPlayerCharacter.h"
 
 ASTUPlayerCharacter::ASTUPlayerCharacter(const FObjectInitializer& ObjInit)
     : Super(ObjInit)
