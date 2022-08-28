@@ -7,5 +7,5 @@ Frameworks I used:
 
 If you want to debug:
 1. Right click on ShotThemUp.uproject file
-2. Choose Generate VS sln-file
+2. Choose Generate VS project-files
 3. Enjoy!
