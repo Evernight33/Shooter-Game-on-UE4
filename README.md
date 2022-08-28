@@ -5,4 +5,7 @@ Frameworks I used:
 * VS Community 2022
 * UE4 v4.27
 
-Enjoy!
+If you want to debug:
+1. Right click on ShotThemUp.uproject file
+2. Choose Generate VS sln-file
+3. Enjoy!
