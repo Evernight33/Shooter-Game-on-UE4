@@ -32,6 +32,8 @@ void ASTUGameModeBase::StartPlay()
 
     CurrentRound = 1;
     StartRound();
+
+    SetMatchState(ESTUMatchState::InProgress);
 }
 
 void ASTUGameModeBase::Killed(AController* KillerController, AController* VictimController)
@@ -234,5 +236,16 @@ void ASTUGameModeBase::GameOver()
             Pawn->TurnOff();
             Pawn->DisableInput(nullptr);
         }
+    }
+
+    SetMatchState(ESTUMatchState::GameOver);
+}
+
+void ASTUGameModeBase::SetMatchState(ESTUMatchState State) 
+{
+    if (MatchState != State)
+    {
+        MatchState = State;
+        OnMatchStateChange.Broadcast(MatchState);
     }
 }
