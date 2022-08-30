@@ -18,11 +18,18 @@ void ASTUGameHUD::DrawHUD()
 void ASTUGameHUD::BeginPlay()
 {
     Super::BeginPlay();
-    UUserWidget* PlayerHUDWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass);
 
-    if (PlayerHUDWidget != nullptr)
+    GameWidgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
+    GameWidgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass));
+
+    for (auto GameWidgetPair : GameWidgets)
     {
-        PlayerHUDWidget->AddToViewport();
+        const auto GameWidget = GameWidgetPair.Value;
+        if (GameWidget)
+        {
+            GameWidget->AddToViewport();
+            GameWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
     }
 
     if (GetWorld())
@@ -50,7 +57,22 @@ void ASTUGameHUD::DrawCrossHair() // draws green aim
     DrawLine(Center.Min, Center.Max - HalfLineSize, Center.Min, Center.Max + HalfLineSize, LineColor, LineThickness);
 }
 
-void ASTUGameHUD::OnMatchStateChange(ESTUMatchState MatchState) 
+void ASTUGameHUD::OnMatchStateChange(ESTUMatchState MatchState)
 {
+    if (CurrentWidget)
+    {
+        CurrentWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
+    
+    if (GameWidgets.Contains(MatchState))
+    {
+        CurrentWidget = GameWidgets[MatchState];
+
+        if (CurrentWidget)
+        {
+            CurrentWidget->SetVisibility(ESlateVisibility::Visible);
+        }
+    }
+
     UE_LOG(LogSTUGameHUD, Display, TEXT("Match state changed to: %s"), *UEnum::GetValueAsString(MatchState));
 }
