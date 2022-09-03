@@ -14,3 +14,8 @@ int32 ASTUPlayerState::GetKillsNum() const
 {
     return KillsNum;
 }
+
+int32 ASTUPlayerState::GetDeathsNum() const 
+{
+    return DeathsNum;
+}

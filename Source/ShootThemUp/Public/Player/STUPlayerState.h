@@ -23,6 +23,7 @@ public:
 
     void LogInfo() const;
     int32 GetKillsNum() const;
+    int32 GetDeathsNum() const;
 
 private:
     int32 TeamId;
