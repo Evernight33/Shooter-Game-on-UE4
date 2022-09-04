@@ -4,6 +4,7 @@
 #include "UI/STUPlayerHUDWidget.h"
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
+#include "Components/STURespawnComponent.h"
 #include "AI/Services/STUFindEnemyService.h"
 #include "Components/STUAIPerceptionComponent.h"
 #include "Player/STUPlayerState.h"
@@ -12,6 +13,8 @@ float USTUPlayerHUDWidget::GetHealthPercent() const
 {
     float HealthPercent = 0.0;
     USTUHealthComponent* HealthComponent = GetComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+
+    GetComponent<USTURespawnComponent>(GetOwningPlayer()); // trash function
 
     if (HealthComponent != nullptr)
     {
@@ -25,7 +28,6 @@ bool USTUPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData) const
 {
     bool IsNotNull = false;
     USTUWeaponComponent* WeaponComponent = GetComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
-  
     if (WeaponComponent != nullptr)
     {
         WeaponComponent->GetWeaponUIData(UIData);
@@ -89,15 +91,15 @@ ComponentType* USTUPlayerHUDWidget::GetComponent(AActor* PlayerPawn)
     return CompReturnVal;
 }
 
-bool USTUPlayerHUDWidget::Initialize()
+void USTUPlayerHUDWidget::NativeOnInitialized()
 {
+    Super::NativeOnInitialized();
+
     if (GetOwningPlayer())
     {
         GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHUDWidget::OnNewPawn);
         OnNewPawn(GetOwningPlayerPawn());
     }
-
-    return Super::Initialize();
 }
 
 void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
