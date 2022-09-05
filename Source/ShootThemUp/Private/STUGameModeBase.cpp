@@ -10,7 +10,7 @@
 #include "Components/STURespawnComponent.h"
 #include "UI/STUPlayerHUDWidget.h"
 #include "EngineUtils.h"
-
+#include "STUGameInstance.h"
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All)
 
 constexpr static int32 MinRoundTimeForRespawn = 10;
