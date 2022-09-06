@@ -7,6 +7,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "STUGameInstance.h"
 
 void USTUGameOverWidget::NativeOnInitialized()
 {
@@ -21,6 +22,7 @@ void USTUGameOverWidget::NativeOnInitialized()
             GameMode->OnMatchStateChange.AddUObject(this, &USTUGameOverWidget::OnMatchStateChanged);
         }
     }
+
     if (ResetLevelButton)
     {
         ResetLevelButton->OnClicked.AddDynamic(this, &USTUGameOverWidget::OnResetLevel);
