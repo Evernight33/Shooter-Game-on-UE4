@@ -7,6 +7,7 @@
 #include "Components/STURespawnComponent.h"
 #include "AI/Services/STUFindEnemyService.h"
 #include "Components/STUAIPerceptionComponent.h"
+#include "Components/ProgressBar.h"
 #include "Player/STUPlayerState.h"
 
 float USTUPlayerHUDWidget::GetHealthPercent() const 
@@ -108,6 +109,8 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
     {
         //OnTakeDamage();   -- Won't implement it in final version of the project
     }    
+
+    UpdateHealthBar();
 }
 
 bool USTUPlayerHUDWidget::AreEnemies(AController* Controller1, AController* Controller2) 
@@ -123,6 +126,34 @@ bool USTUPlayerHUDWidget::AreEnemies(AController* Controller1, AController* Cont
     return ReturnVal;
 }
 
+int32 USTUPlayerHUDWidget::GetKillsNum() const
+{
+    const auto Controller = GetOwningPlayer();
+    if (Controller)
+    {
+        const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+        return PlayerState ? PlayerState->GetKillsNum() : 0;
+    }
+
+    return 0;
+}
+
+FString USTUPlayerHUDWidget::FormatBullets(int32 BulletsCount) const 
+{
+    const int32 MaxLen = 3;
+    const TCHAR PrefixSymbol = '0';
+
+    auto BulletStr = FString::FromInt(BulletsCount);
+    const auto SymbolNumToAdd = MaxLen - BulletStr.Len();
+
+    if (SymbolNumToAdd > 0)
+    {
+        BulletStr = FString::ChrN(SymbolNumToAdd, PrefixSymbol).Append(BulletStr);
+    }
+
+    return BulletStr;
+}
+
 void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
 {
     USTUHealthComponent* HealthComponent = GetComponent<USTUHealthComponent>(NewPawn);
@@ -131,4 +162,11 @@ void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
     {
         HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHUDWidget::OnHealthChanged);
     }
+
+    UpdateHealthBar();
+}
+
+void USTUPlayerHUDWidget::UpdateHealthBar()
+{
+    HealthProgressBar->SetFillColorAndOpacity(GetHealthPercent() > PercentColorThreshold ? GoodColor : BadColor);
 }
