@@ -28,14 +28,22 @@ void USTUMenuWidget::NativeOnInitialized()
     InitLevelItems();
 }
 
+void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) 
+{
+    if (Animation == HideAnimation)
+    {
+        const auto STUGameInstance = GetSTUGameInstance();
+
+        if (STUGameInstance)
+        {
+            UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
+        }
+    }
+}
+
 void USTUMenuWidget::OnStartGame() 
 {
-    const auto STUGameInstance = GetSTUGameInstance();
-
-    if (STUGameInstance)
-    {
-        UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
-    }
+    PlayAnimation(HideAnimation);
 }
 
 void USTUMenuWidget::OnQuitGame()
