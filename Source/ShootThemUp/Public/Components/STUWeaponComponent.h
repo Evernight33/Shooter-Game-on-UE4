@@ -32,6 +32,8 @@ public:
 
     bool GetIsReloadAnimInProgress() const;
 
+    ASTUBaseWeapon* GetCurrentWeapon() { return CurrentWeapon; }
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
     TArray<FWeaponData> WeaponData;

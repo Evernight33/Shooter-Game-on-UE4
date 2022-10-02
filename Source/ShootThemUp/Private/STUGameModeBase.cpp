@@ -4,6 +4,8 @@
 #include "STUGameModeBase.h"
 #include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
+#include "AI/STUAIController.h"
+#include "AI/STUAICharacter.h"
 #include "UI/STUGameHUD.h"
 #include "AIController.h"
 #include "Player/STUPlayerState.h"
@@ -11,6 +13,11 @@
 #include "UI/STUPlayerHUDWidget.h"
 #include "EngineUtils.h"
 #include "STUGameInstance.h"
+#include "Components/AudioComponent.h"
+#include "Player/STUPlayerCharacter.h"
+#include "Weapon/STURifleWeapon.h"
+#include "Components/STUWeaponComponent.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All)
 
 constexpr static int32 MinRoundTimeForRespawn = 10;
@@ -118,6 +125,8 @@ void ASTUGameModeBase::ResetPlayers()
 {
     if (GetWorld())
     {
+        StopRifleFire();
+
         for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
         {
             ResetOnePlayer(It->Get());
@@ -130,8 +139,9 @@ void ASTUGameModeBase::ResetOnePlayer(AController* Controller)
     {
         Controller->GetPawn()->Reset();
     }
+
     RestartPlayer(Controller);
-    SetPlayerColor(Controller);
+    SetPlayerColor(Controller); 
 }
 
 void ASTUGameModeBase::CreateTeamsInfo()
@@ -227,6 +237,8 @@ void ASTUGameModeBase::StartRespawn(AController* Controller)
 
 void ASTUGameModeBase::GameOver() 
 {
+    StopRifleFire();
+
     UE_LOG(LogSTUGameModeBase, Display, TEXT("====== GAME OVER ======"));
     LogPlayerInfo();
 
@@ -272,4 +284,42 @@ bool ASTUGameModeBase::ClearPause()
     }
 
     return PauseCleared;
+}
+
+void ASTUGameModeBase::StopRifleFire() 
+{
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        AController* Controller = (It->Get());
+
+        if (Controller)
+        {
+            if (ASTUPlayerController* PlayerController = Cast<ASTUPlayerController>(Controller))
+            {
+                if (ASTUPlayerCharacter* PlayerCharacter = Cast<ASTUPlayerCharacter>(PlayerController->GetCharacter()))
+                {
+                    if (USTUWeaponComponent* WeaponComponent = Cast<USTUWeaponComponent>(PlayerCharacter->GetWeaponComponent()))
+                    {
+                        if (ASTURifleWeapon* RifleWeapon = Cast<ASTURifleWeapon>(WeaponComponent->GetCurrentWeapon()))
+                        {
+                            RifleWeapon->StopFire();
+                        }
+                    }
+                }
+            }
+            else if (ASTUAIController* AIController = Cast<ASTUAIController>(Controller))
+            {
+                if (ASTUAICharacter* AICharacter = Cast<ASTUAICharacter>(AIController->GetCharacter()))
+                {
+                    if (USTUWeaponComponent* WeaponComponent = Cast<USTUWeaponComponent>(AICharacter->GetWeaponComponent()))
+                    {
+                        if (ASTURifleWeapon* RifleWeapon = Cast<ASTURifleWeapon>(WeaponComponent->GetCurrentWeapon()))
+                        {
+                            RifleWeapon->StopFire();
+                        }
+                    }
+                }
+            }
+        }
+    }  
 }

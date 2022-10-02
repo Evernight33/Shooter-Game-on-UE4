@@ -8,6 +8,7 @@
 
 class USTUHealthComponent;
 class USTUWeaponComponent;
+class USoundCue;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -39,12 +40,15 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Material")
     FName MaterialColorName = "Paint Color";
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+    USoundCue* DeathSound;
+
     virtual void BeginPlay() override;
     virtual void OnDeath();
     virtual void OnHealthChanged(float Health, float HealthDelta);
 
 public:
-    virtual void Tick(float DeltaTime) override;   
+    virtual void Tick(float DeltaTime) override;
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
     virtual bool IsRunning() const;
@@ -53,6 +57,7 @@ public:
     float GetMovementDirection() const;
 
     void SetPlayerColor(const FLinearColor& Color);
+    USTUWeaponComponent* GetWeaponComponent() { return WeaponComponent; }
 
 private:
     void OnStartFire();

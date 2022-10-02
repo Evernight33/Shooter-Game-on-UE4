@@ -3,6 +3,8 @@
 
 #include "Weapon/STULauncherWeapon.h"
 #include "Weapon/STUProjectile.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 void ASTULauncherWeapon::StartFire() 
 {
@@ -12,28 +14,36 @@ void ASTULauncherWeapon::StartFire()
 void ASTULauncherWeapon::MakeShot() 
 {
     // add StopFire and log in launcher and riffle
-    if (GetWorld() && !IsAmmoEmpty())
+    if (GetWorld())
     {
-        FVector TraceStart, TraceEnd;
-        GetTraceData(TraceStart, TraceEnd);
-
-        FHitResult HitResult;
-        MakeHit(HitResult, TraceStart, TraceEnd);
-
-        const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-        const FVector Direction = (EndPoint - GetMuzzleWorldLocation());
-
-        const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
-        ASTUProjectile* Projectile = GetWorld()->SpawnActorDeferred<ASTUProjectile>(ProjectileClass, SpawnTransform);
-
-        if (Projectile != nullptr)
+        if (!IsAmmoEmpty())
         {
-            Projectile->SetShotDirection(Direction);
-            Projectile->SetOwner(GetOwner());
-            Projectile->FinishSpawning(SpawnTransform);
-        }
+            FVector TraceStart, TraceEnd;
+            GetTraceData(TraceStart, TraceEnd);
 
-        DecreaseAmmo();
-        SpawnMuzzleFX();
+            FHitResult HitResult;
+            MakeHit(HitResult, TraceStart, TraceEnd);
+
+            const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+            const FVector Direction = (EndPoint - GetMuzzleWorldLocation());
+
+            const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
+            ASTUProjectile* Projectile = GetWorld()->SpawnActorDeferred<ASTUProjectile>(ProjectileClass, SpawnTransform);
+
+            if (Projectile != nullptr)
+            {
+                Projectile->SetShotDirection(Direction);
+                Projectile->SetOwner(GetOwner());
+                Projectile->FinishSpawning(SpawnTransform);
+            }
+
+            DecreaseAmmo();
+            SpawnMuzzleFX();
+            UGameplayStatics::SpawnSoundAttached(FireSound, WeaponMesh, MuzzleSocketName);
+        }
+        else
+        {
+            UGameplayStatics::SpawnSoundAtLocation(GetWorld(), NoAmmoSound, GetActorLocation());
+        }
     }
 }
