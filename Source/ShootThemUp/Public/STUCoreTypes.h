@@ -48,14 +48,17 @@ struct FWeaponUIData
 
 
 // Health
-
 DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, float);
 
 
 // VFX
-
 class UNiagaraSystem;
+
+
+//Sound
+class USoundCue;
+
 
 USTRUCT(BlueprintType)
 struct FDecalData
@@ -85,6 +88,9 @@ struct FImpactData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
     FDecalData DecalData;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+    USoundCue* ProjectileHitSound;
 };
 
 USTRUCT(BlueprintType)
