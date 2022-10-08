@@ -35,6 +35,21 @@ void ASTURifleWeapon::StopFire()
     UE_LOG(LogRifleWeapon, Display, TEXT("Fire stoped"));
 }
 
+void ASTURifleWeapon::Zoom(bool Enabled) 
+{
+    const auto Controller = Cast<APlayerController>(GetController());
+
+    if (Controller && Controller->PlayerCameraManager)
+    {
+        if (Enabled)
+        {
+            DefaultCameraFOV = Controller->PlayerCameraManager->GetFOVAngle();
+        }
+
+        Controller->PlayerCameraManager->SetFOV(Enabled ? FOVZoomAngle : DefaultCameraFOV);
+    }
+}
+
 void ASTURifleWeapon::BeginPlay() 
 {
     Super::BeginPlay();

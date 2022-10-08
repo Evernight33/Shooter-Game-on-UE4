@@ -34,6 +34,8 @@ public:
 
     ASTUBaseWeapon* GetCurrentWeapon() { return CurrentWeapon; }
 
+    void Zoom(bool Enabled);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
     TArray<FWeaponData> WeaponData;
