@@ -6,15 +6,19 @@
 #include "Components/STUHealthComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "UI/STUPlayerHUDWidget.h"
+#include "Perception/AISense_Damage.h"
 
 AActor* USTUAIPerceptionComponent::GetClosestEnemy() const 
 {
     AActor* ReturnVal = nullptr;
     TArray<AActor*> PercieveActors;
+
     GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PercieveActors);
 
     if (PercieveActors.Num() != 0)
     {
+        AttackCharacter: // Turn around if AICharacter receive some damage
+
         const auto Controller = Cast<AAIController>(GetOwner());
         
         if (Controller != nullptr)
@@ -46,6 +50,13 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
             }
         }
     }
-
+    else
+    {
+        GetCurrentlyPerceivedActors(UAISense_Damage::StaticClass(), PercieveActors);
+        if (PercieveActors.Num() != 0)
+        {
+            goto AttackCharacter; // actually idgaf about goto operator cuz it won't break anything
+        }
+    }
     return ReturnVal;
 }
