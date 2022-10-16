@@ -270,6 +270,7 @@ bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDel
     if (PauseSet)
     {
         SetMatchState(ESTUMatchState::Pause);
+        StopAllFire();
     }
     return PauseSet;
 }
@@ -322,4 +323,16 @@ void ASTUGameModeBase::StopRifleFire()
             }
         }
     }  
+}
+
+void ASTUGameModeBase::StopAllFire() 
+{
+    for (auto Pawn : TActorRange<APawn>(GetWorld()))
+    {
+        if (const auto WeaponComponent = USTUPlayerHUDWidget::GetComponent<USTUWeaponComponent>(Pawn))
+        {
+            WeaponComponent->StopFire();
+            WeaponComponent->Zoom(false);
+        }
+    }
 }

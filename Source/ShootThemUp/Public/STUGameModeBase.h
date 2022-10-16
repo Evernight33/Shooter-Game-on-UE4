@@ -68,4 +68,6 @@ private:
     void SetMatchState(ESTUMatchState State);
 
     void StopRifleFire();
+
+    void StopAllFire();
 };
